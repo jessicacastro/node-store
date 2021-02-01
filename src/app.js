@@ -9,8 +9,12 @@ const app = express();
 // Conexão com o banco
 mongoose.connect('mongodb+srv://jessicacastro:dbpass@cluster-sp-google.f4alk.mongodb.net/nodestore?retryWrites=true&w=majority', {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
+  useCreateIndex: true,
+  useFindAndModify: false,
 });
+
+
 
 const Product = require('./models/product');
 
