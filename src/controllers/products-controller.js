@@ -1,7 +1,7 @@
 'use strict'
 const mongoose = require('mongoose');
-
 const Product = mongoose.model('Product');
+const ValidationContract = require('../validators/fluent-validator');
 
 exports.get = (req, res, next) => {
   Product.find({
@@ -58,8 +58,18 @@ exports.getByTag = (req, res, next) => {
   });
 }
 
-
 exports.post = (req, res, next) => {
+  const { title, slug, description } = req.body;
+  let contract = new ValidationContract();
+  contract.hasMinLen(title, 3, 'The title must have at least 3 letters.');
+  contract.hasMinLen(slug, 3, 'The slug must have at least 3 letters.');
+  contract.hasMinLen(description, 3, 'The description must have at least 3 letters.');
+
+  //Se os dados não forem válidos
+  if(!contract.isValid()) {
+    return res.status(400).send(contract.errors()).end();
+  }
+
   let product = new Product(req.body);
   product.save().then(response => {
     res.status(201).send({message: 'Product has ben saved sucessfully.'});
